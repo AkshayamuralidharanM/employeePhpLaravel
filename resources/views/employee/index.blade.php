@@ -11,7 +11,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <ul id="saveform_errList">
 
+        </ul>
         <div class="form-group mb-3">
             <label for="">Name</label>
             <input type="text" class="name form-control">
@@ -45,6 +47,9 @@
     <div class="row">
         <div class="col-md-12">
         <div class="card">
+            <div id="success_message">
+                
+            </div>
             <div class="card-header">
                 <h4> Employee
                     <a href="#" data-bs-toggle="modal" data-bs-target="#AddEmployeeModal" class="btn btn-primary float-end btn-sm">Add students</a>
@@ -92,7 +97,25 @@
                 data:data,
                 dataType:"json",
                 success:function(response){
-                    console.log(response)
+                    //console.log(response)
+                    if(response.status == 400)
+                    {
+                        $('#saveform_errList').html("");
+                        $('#saveform_errList').addClass('alert alert-danger')
+
+                        $.each(response.errors,function(key,err_values){
+                            $('#saveform_errList').append('<li>'+err_values+'</li>');
+                        });
+                    }
+                    else
+                    {
+                        $('#saveform_errList').html("");
+                        $('#success_message').addClass('alert alert-success')
+                        $('#success_message').text(response.message)
+                        $('#AddEmployeeModal').modal('hide');
+                        $('#AddEmployeeModal').find('input').val("");
+
+                    }
                 }
             });
         });

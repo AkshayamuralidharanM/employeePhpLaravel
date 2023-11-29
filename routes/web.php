@@ -13,7 +13,7 @@ use App\Http\Controllers\EmployeeController;
 |
 */
 Route::get('employees',[EmployeeController::class,'index']);
-Route::get('employees',[EmployeeController::class,'store']);
+Route::post('employees',[EmployeeController::class,'store']);
 
 Route::get('/', function () {
     return view('welcome');
