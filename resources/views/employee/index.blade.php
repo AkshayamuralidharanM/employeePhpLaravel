@@ -52,7 +52,7 @@
       </div>
       <div class="modal-body">
         <ul id="updateform_errList">
-        <input type="text" id="edit_emp_id">
+        <input type="hidden" id="edit_emp_id">
         </ul>
         <div class="form-group mb-3">
             <label for="">Name</label>
@@ -77,7 +77,26 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary update_employee">Update</button>
+        <button type="button" id="UpdateBtn" class="btn btn-primary update_employee">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="DeleteEmployeeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel"> Delete Employee</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       <input type="hidden" class="" id="delete_emp_id">
+       <h4>Are you sure ? want to delete this data ? </h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" id="UpdateBtn" class="btn btn-danger delete_employee_btn">Delete</button>
       </div>
     </div>
   </div>
@@ -86,10 +105,13 @@
 <div class="container py-5">
     <div class="row">
         <div class="col-md-12">
-        <div class="card">
-            <div id="success_message">
+
+        <div id="success_message" class="mb-3">
                 
-            </div>
+        </div>
+        
+        <div class="card">
+          
             <div class="card-header">
                 <h4> Employee
                     <a href="#" data-bs-toggle="modal" data-bs-target="#AddEmployeeModal" class="btn btn-primary float-end btn-sm">Add students</a>
@@ -125,6 +147,22 @@
 <script>
     $(document).ready(function () {
 
+        function handleSuccess(message) {
+            $('#success_message').removeClass().addClass('alert alert-success').text(message).fadeIn(500);
+
+            setTimeout(function() {
+                $('#success_message').fadeOut(500);
+            }, 3000); 
+        }
+
+        function handleError(message) {
+            $('#success_message').removeClass().addClass('alert alert-danger').text(message).fadeIn(500);
+
+            setTimeout(function() {
+                $('#success_message').fadeOut(500);
+            }, 3000); 
+        }
+
         fetchstudent();
         function fetchstudent()
         {
@@ -154,7 +192,7 @@
             
             e.preventDefault();
             var emp_id = $(this).val();
-            console.log(emp_id)
+
             $('#EditEmployeeModal').modal('show');
 
             $.ajax({
@@ -163,15 +201,17 @@
                 success:function(response){
                     if(response.status == 404)
                     {
-                        $('#success_message').html("");
-                        $('#success_message').addClass('alert alert-danger')
-                        $('#success_message').text(response.message);
+                        //$('#success_message').html("");
+                        //$('#success_message').addClass('alert alert-danger')
+                        //$('#success_message').text(response.message);
+                        handleError(response.message);
                     } else {
                         $("#edit_name").val(response.employee.name);
                         $("#edit_email").val(response.employee.email);
                         $("#edit_phone").val(response.employee.phone);
                         $("#edit_address").val(response.employee.address);
                         $("#edit_emp_id").val(emp_id);
+                        $("#UpdateBtn").val(emp_id);
                        
                     }
                 }
@@ -220,8 +260,9 @@
                     else
                     {
                         $('#saveform_errList').html("");
-                        $('#success_message').addClass('alert alert-success')
-                        $('#success_message').text(response.message)
+                        //$('#success_message').addClass('alert alert-success')
+                        //$('#success_message').text(response.message)
+                        handleSuccess(response.message)
                         $('#AddEmployeeModal').modal('hide');
                         $('#AddEmployeeModal').find('input').val("");
                         fetchstudent();
@@ -235,7 +276,8 @@
             e.preventDefault();
             $(this).text("Updating")
 
-            var emp_id = $('#edit_emp_id').val();
+            var emp_id = $('#UpdateBtn').val();
+            console.log(emp_id)
 
             var data = {
                 'name' : $('#edit_name').val(),
@@ -268,18 +310,19 @@
                     }
                     else if(response.status == 404){
                         $('#updateform_errList').html("");
-                        $('#success_message').addClass('alert alert-success')
-                        $('#success_message').text(response.message)
+                        //$('#success_message').addClass('alert alert-success')
+                        //$('#success_message').text(response.message)
+                        handleError(response.message);
                         $('#EditEmployeeModal').modal('hide');
                         $('.update_employee').text("Update")
                     }
                     else{
                         $('#updateform_errList').html("");
-                        $('#success_message').html("");
+                        //$('#success_message').html("");
 
-                        $('#success_message').addClass('alert alert-success')
-                        $('#success_message').text(response.message)
-
+                        //$('#success_message').addClass('alert alert-success')
+                        //$('#success_message').text(response.message)
+                        handleSuccess(response.message);
                         $('#EditEmployeeModal').modal('hide');
                         $('.update_employee').text("Update")
 
@@ -287,6 +330,48 @@
                     }
                 }
             });
+        });
+
+        $(document).on('click','.delete_employee',function(e){
+            
+            e.preventDefault();
+            var emp_id = $(this).val();
+            $('#delete_emp_id').val(emp_id);
+            $('#DeleteEmployeeModal').modal('show');
+
+        });
+
+        $(document).on('click','.delete_employee_btn',function(e){
+            
+            e.preventDefault();
+            $(this).text('Deleting')
+            var emp_id = $('#delete_emp_id').val();
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+
+                type:"DELETE",
+                url:"/delete-employee/"+emp_id,
+
+                success:function(response){
+
+                    //$('#success_message').addClass('alert alert-success')
+                    //$('#success_message').text(response.message);
+                    handleSuccess(response.message)
+
+                    $('.delete_employee_btn').text('Delete');
+                    $('#DeleteEmployeeModal').modal('hide');
+
+                    fetchstudent();
+                }
+            });
+           
+
         });
     });
 </script>

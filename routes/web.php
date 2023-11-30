@@ -21,6 +21,8 @@ Route::get('edit-employee/{id}',[EmployeeController::class,'edit']);
 
 Route::put('update-employee/{id}',[EmployeeController::class,'update']);
 
+Route::delete('delete-employee/{id}',[EmployeeController::class,'destroy']);
+
 Route::get('/', function () {
     return view('welcome');
 });
