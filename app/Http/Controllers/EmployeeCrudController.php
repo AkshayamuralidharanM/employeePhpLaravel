@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\EmployeeCrud;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -12,6 +13,15 @@ class EmployeeCrudController extends Controller
     public function index()
     {
         return view('EmployeeCrud.index');
+    }
+
+    public function fetchemployee()
+    {
+        $employee = EmployeeCrud::all();
+        return response()->json([
+            'employee'=> $employee,
+        ]);
+
     }
 
     public function store(Request $request){

@@ -87,7 +87,43 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Gender</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Image</th>
+                                        <th>DOB</th>
+                                        <th>DOJ</th>
+                                        <th>Department</th>
+                                        <th>Designation</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Ari</td>
+                                        <td>Male</td>
+                                        <td>abc@gmail.com</td>
+                                        <td>12344</td>
+                                        <td>abc</td>
+                                        <td><img src="" width="50px" height="50px" alt="Image"></td>
+                                        <td>1/1/23</td>
+                                        <td>1/1/23</td>
+                                        <td>IT</td>
+                                        <td>Developer</td>
+                                        <td><button type="button" value="" class="edit_btn btn btn-success btn-sm">Edit</button></td>
+                                        <td><button type="button" value="" class="delete_btn btn btn-danger btn-sm">Delete</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </table>
                     </div>
                 </div>
@@ -102,17 +138,48 @@
 <script>
   $(document).ready(function () {
 
+    $.ajaxSetup({
+         headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    fetchEmployee();
+    function fetchEmployee(){
+        
+        $.ajax({
+            type:"GET",
+            url:"/fetch-employee",
+            dataType:"json",
+            success:function(response){
+                $('tbody').html("");
+                $.each(response.employee,function(key,item){
+                        $('tbody').append('<tr>\
+                            <td>'+item.id+'</td>\
+                            <td>'+item.name+'</td>\
+                            <td>'+item.gender+'</td>\
+                            <td>'+item.email+'</td>\
+                            <td>'+item.phone+'</td>\
+                            <td>'+item.address+'</td>\
+                            <td><img src="uploads/employee/'+item.image+'" width="50px" height="50px" alt="Image"></td>\
+                            <td>'+item.dob+'</td>\
+                            <td>'+item.doj+'</td>\
+                            <td>'+item.department+'</td>\
+                            <td>'+item.designation+'</td>\
+                            <td><button type="button" value="'+item.id+'" class="edit_employee btn btn-primary btn-sm">Edit</button></td>\
+                            <td><button type="button" value="'+item.id+'" class="delete_employee btn btn-danger btn-sm">Delete</button></td>\
+                        </tr>')
+                    });
+            }
+        });
+    }
+
     $(document).on('submit','#AddEmployeeForm',function(e){
             
             e.preventDefault();
 
             let formData = new FormData($('#AddEmployeeForm')[0]);
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+            
 
             $.ajax({
                 type:"POST",
