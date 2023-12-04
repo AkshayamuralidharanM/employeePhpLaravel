@@ -14,6 +14,7 @@ use App\Http\Controllers\EmployeeCrudController;
 |
 */
 Route::get('/employeecrud',[EmployeeCrudController::class,'index']);
+Route::post('/employeecrud',[EmployeeCrudController::class,'store']);
 
 
 

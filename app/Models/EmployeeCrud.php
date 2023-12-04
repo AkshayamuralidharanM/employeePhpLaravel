@@ -17,9 +17,9 @@ class EmployeeCrud extends Model
         'address',
         'gender',
         'image',
-        'Dob',
-        'Department',
-        'Doj',
-        'Designation',        
+        'dob',
+        'department',
+        'doj',
+        'designation',        
     ];
 }
