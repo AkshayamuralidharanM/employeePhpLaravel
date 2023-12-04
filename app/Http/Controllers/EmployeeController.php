@@ -133,7 +133,7 @@ class EmployeeController extends Controller
         $employee->delete();
         return response()->json([
             'status'=>200,
-            'message'=>'Student deleted successfully',
+            'message'=>'Employee deleted successfully',
         ]);
     }
 
