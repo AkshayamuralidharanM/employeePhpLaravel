@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EmployeeCrudController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,6 +13,13 @@ use App\Http\Controllers\EmployeeController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/employeecrud',[EmployeeCrudController::class,'index']);
+
+
+
+
+
+
 Route::get('employees',[EmployeeController::class,'index']);
 Route::get('fetch-students',[EmployeeController::class,'fetchstudent']);
 
