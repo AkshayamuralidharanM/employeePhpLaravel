@@ -183,19 +183,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>1</td>
-                                        <td>Ari</td>
-                                        <td>Male</td>
-                                        <td>abc@gmail.com</td>
-                                        <td>12344</td>
-                                        <td>abc</td>
-                                        <td><img src="" width="50px" height="50px" alt="Image"></td>
-                                        <td>1/1/23</td>
-                                        <td>1/1/23</td>
-                                        <td>IT</td>
-                                        <td>Developer</td>
-                                        <td><button type="button" value="" class="edit_btn btn btn-success btn-sm">Edit</button></td>
-                                        <td><button type="button" value="" class="delete_btn btn btn-danger btn-sm">Delete</button></td>
+                                        
                                     </tr>
                                 </tbody>
                             </table>
