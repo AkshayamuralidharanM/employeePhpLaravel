@@ -18,8 +18,14 @@ Route::post('/employeecrud',[EmployeeCrudController::class,'store']);
 
 Route::get('/fetch-employee',[EmployeeCrudController::class,'fetchemployee']);
 
+Route::get('/edit-emp/{id}',[EmployeeCrudController::class,'edit']);
+
+Route::post('/update-emp/{id}',[EmployeeCrudController::class,'update']);
 
 
+
+
+//-----------------------------------------------------------------
 
 Route::get('employees',[EmployeeController::class,'index']);
 Route::get('fetch-students',[EmployeeController::class,'fetchstudent']);

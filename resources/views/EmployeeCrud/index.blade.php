@@ -67,10 +67,85 @@
             <button type="submit" class="btn btn-primary">Save</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
-        </div>
+       </form>
+    </div>
 
     
-      </form>
+      
+</div>
+</div>
+
+<!--Edit  Modal -->
+<div class="modal fade" id="EDIT_employeeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit employee</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="UpdateEmployeeForm" enctype="multipart/form-data" method="post">
+        <div class="modal-body">
+            <ul class="alert alert-warning d-none" id="update_errList"></ul>
+            <input type="hidden" name="emp_name" id="emp_name" class="form-control">
+            <div class="form-group mb-3">
+                <label for="">Name</label>
+                <input type="text" name="name" id="edit_name" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="">Email</label>
+                <input type="text" name="email" id="edit_email" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="">Gender</label>
+                <input type="text" name="gender" id="edit_gender" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="">Phone</label>
+                <input type="text" name="phone" id="edit_phone" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="">Address</label>
+                <input type="text" name="address" id="edit_address" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="">DOB</label>
+                <input type="text" class="form-control datepicker" id="edit_dob" name="dob" placeholder="Select a date">
+            </div>
+            <div class="form-group mb-3">
+                <label for="">DOJ</label>
+                <input type="text" class="form-control datepicker" id="edit_doj" name="doj" placeholder="Select a date">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="">Image</label>
+                <input type="file" name="image" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="">Department</label>
+                <input type="text" name="department" id="edit_department" class="form-control">
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="">Designation</label>
+                <input type="text" name="designation" id="edit_designation" class="form-control">
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+       </form>
+    </div>
+
+    
+      
 </div>
 </div>
 
@@ -88,7 +163,7 @@
                     <div class="table-responsive">
                         <table>
                             <table class="table table-bordered">
-                                <thead>
+                                <thead class="thead-dark">
                                     <tr>
                                         <th>ID</th>
                                         <th>Name</th>
@@ -173,6 +248,42 @@
         });
     }
 
+    $(document).on('click','.edit_employee',function(e){
+            
+            e.preventDefault();
+
+            var emp_id = $(this).val();
+            $('#EDIT_employeeModal').modal('show');
+            
+            $.ajax({
+                type:"GET",
+                url:"/edit-emp/"+emp_id,
+                success:function(response){
+                    if(response.status == 404){
+                        alert(response.message);
+                        $('#EDIT_employeeModal').modal('hide');
+                    }
+                    else{
+
+                        $('#edit_name').val(response.employee.name);
+                        $('#edit_email').val(response.employee.email);
+                        $('#edit_gender').val(response.employee.gender);
+                        $('#edit_phone').val(response.employee.phone);
+                        $('#edit_address').val(response.employee.address);
+                        $('#edit_department').val(response.employee.department);
+                        $('#edit_designation').val(response.employee.designation);
+                        $('#edit_dob').val(response.employee.dob);
+                        $('#edit_doj').val(response.employee.doj);
+                        $('#emp_name').val(emp_id);
+                        $('.edit_employee').val(emp_id);
+
+                    }
+        
+                }
+            });
+
+    });
+
     $(document).on('submit','#AddEmployeeForm',function(e){
             
             e.preventDefault();
@@ -189,7 +300,7 @@
                 processData:false,
                 success:function(response){
                      //console.log(response)
-                     if(response.status == 400)
+                    if(response.status == 400)
                     {
                         $('#saveform_errList').html("");
                         $('#saveform_errList').removeClass('d-none')
@@ -208,10 +319,61 @@
                        alert(response.message)
 
                     }
+
+                    fetchEmployee();
                 }
             });
 
-        });
+    });
+
+    $(document).on('submit','#UpdateEmployeeForm',function(e){
+            
+            e.preventDefault();
+
+            var id = $('.edit_employee').val(); 
+            alert(id);
+            let EditformData = new FormData($('#UpdateEmployeeForm')[0]);
+
+            $.ajax({
+                type:"POST",
+                url:"/update-emp/"+id,
+                data:EditformData,
+                contentType:false,
+                processData:false,
+                success:function(response){
+                     //console.log(response)
+                    if(response.status == 400)
+                    {
+                        $('#update_errList').html("");
+                        $('#update_errList').removeClass('d-none')
+
+                        $.each(response.errors,function(key,err_values){
+                            $('#update_errList').append('<li>'+err_values+'</li>');
+                        });
+                    }
+                    else if(response.status == 404)
+                    {
+                        alert(response.message);
+                    }
+                    else if(response.status == 200)
+                    {
+                        $('#update_errList').html("");
+                        $('#update_errList').addClass('d-none');
+                        $('#EDIT_employeeModal').modal('hide');
+
+                       alert(response.message);
+                       fetchEmployee();
+
+                    }
+
+                    fetchEmployee();
+                }
+            });
+
+    });
+
+    
+
   });
 </script>
 
