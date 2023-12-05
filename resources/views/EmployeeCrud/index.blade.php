@@ -136,7 +136,8 @@
 
 @section('scripts')
 <script>
-  $(document).ready(function () {
+  $(document).ready(function ()
+  {
 
     $.ajaxSetup({
          headers: {
@@ -208,6 +209,8 @@
                        alert(response.message)
 
                     }
+
+                    fetchEmployee();
                 }
             });
 
