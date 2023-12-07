@@ -40,11 +40,11 @@
 
             <div class="form-group mb-3">
                 <label for="">DOB</label>
-                <input type="text" class="form-control datepicker" name="dob" placeholder="Select a date">
+                <input type="text" id="dob" class="form-control datepicker" name="dob" placeholder="Select a date">
             </div>
             <div class="form-group mb-3">
                 <label for="">DOJ</label>
-                <input type="text" class="form-control datepicker" name="doj" placeholder="Select a date">
+                <input type="text" id="doj" class="form-control datepicker" name="doj" placeholder="Select a date">
             </div>
 
             <div class="form-group mb-3">
@@ -149,6 +149,31 @@
 </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="DeleteEmpModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add employee</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <div class="modal-body">
+            <h4> Are You Sure ? you want to delete  this data?</h4>
+            <input type="hidden" id="deleting_emp_id" >
+
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="delete_modal_btn btn btn-danger">Delete</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+       </form>
+    </div>
+
+    
+      
+</div>
+</div>
+
 <div class="container">
     <div class="row">
         <div class="col-md-12">
@@ -201,12 +226,32 @@
 <script>
   $(document).ready(function () {
 
+    
+    $("#dob").datepicker();
+    
+
+    $("#doj").datepicker();
+    
+
+
     $.ajaxSetup({
          headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
     fetchEmployee();
+
+    $(document).on('click','.delete_employee',function(e){
+            
+            e.preventDefault();
+
+            var emp_id = $(this).val();
+            $('#DeleteEmpModel').modal('show');
+            $('#deleting_emp_id').val(emp_id);
+            
+            
+    });
+
     function fetchEmployee(){
         
         $.ajax({
@@ -215,24 +260,32 @@
             dataType:"json",
             success:function(response){
                 $('tbody').html("");
+
+                console.log(response.employee);
                 $.each(response.employee,function(key,item){
-                        $('tbody').append('<tr>\
-                            <td>'+item.id+'</td>\
-                            <td>'+item.name+'</td>\
-                            <td>'+item.gender+'</td>\
-                            <td>'+item.email+'</td>\
-                            <td>'+item.phone+'</td>\
-                            <td>'+item.address+'</td>\
-                            <td><img src="uploads/employee/'+item.image+'" width="50px" height="50px" alt="Image"></td>\
-                            <td>'+item.dob+'</td>\
-                            <td>'+item.doj+'</td>\
-                            <td>'+item.department+'</td>\
-                            <td>'+item.designation+'</td>\
-                            <td><button type="button" value="'+item.id+'" class="edit_employee btn btn-primary btn-sm">Edit</button></td>\
-                            <td><button type="button" value="'+item.id+'" class="delete_employee btn btn-danger btn-sm">Delete</button></td>\
-                        </tr>')
-                    });
+                    var dob = item.Dob ? new Date(item.Dob).toLocaleDateString() : ''; // Format as needed
+                    var doj = item.Doj ? new Date(item.Doj).toLocaleDateString() : ''; // Format as needed
+
+
+
+                    $('tbody').append('<tr>\
+                        <td>'+item.id+'</td>\
+                        <td>'+item.name+'</td>\
+                        <td>'+item.gender+'</td>\
+                        <td>'+item.email+'</td>\
+                        <td>'+item.phone+'</td>\
+                        <td>'+item.address+'</td>\
+                        <td><img src="uploads/employee/'+item.image+'" width="50px" height="50px" alt="Image"></td>\
+                        <td>'+dob+'</td>\
+                        <td>'+doj+'</td>\
+                        <td>'+item.Department+'</td>\
+                        <td>'+item.Designation+'</td>\
+                        <td><button type="button" value="'+item.id+'" class="edit_employee btn btn-primary btn-sm">Edit</button></td>\
+                        <td><button type="button" value="'+item.id+'" class="delete_employee btn btn-danger btn-sm">Delete</button></td>\
+                    </tr>');
+                });
             }
+
         });
     }
 
@@ -319,7 +372,6 @@
             e.preventDefault();
 
             var id = $('.edit_employee').val(); 
-            alert(id);
             let EditformData = new FormData($('#UpdateEmployeeForm')[0]);
 
             $.ajax({
@@ -357,6 +409,35 @@
                     fetchEmployee();
                 }
             });
+
+    });
+
+    $(document).on('click','.delete_modal_btn',function(e){
+            
+        e.preventDefault();
+        var id = $('#deleting_emp_id').val(); 
+        $.ajax({
+            type:"DELETE",
+            url:"/delete-emp/"+id,
+            dataType:"json",
+            success:function(response){
+                 //console.log(response)
+                if(response.status == 404)
+                {
+                   alert(response.message);
+                   $('#DeleteEmpModel').modal('hide')
+                    
+                }
+                
+                else if(response.status == 200)
+                {
+                   fetchEmployee();
+                   $('#DeleteEmpModel').modal('hide')
+                   alert(response.message);
+                   
+                }
+            }
+        });
 
     });
 

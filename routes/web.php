@@ -22,6 +22,9 @@ Route::get('/edit-emp/{id}',[EmployeeCrudController::class,'edit']);
 
 Route::post('/update-emp/{id}',[EmployeeCrudController::class,'update']);
 
+Route::delete('/delete-emp/{id}',[EmployeeCrudController::class,'destroy']);
+
+
 
 
 
@@ -42,4 +45,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+//Auth::routes();
