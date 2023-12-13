@@ -123,7 +123,7 @@
 
             <div class="form-group mb-3">
                 <label for="">Image</label>
-                <input type="file" name="image" class="form-control">
+                <input type="file" name="image" id="edit_img" class="form-control">
             </div>
 
             <div class="form-group mb-3">
@@ -232,7 +232,14 @@
     
 
     $("#doj").datepicker();
+
+    $("#edit_dob").datepicker();
+
+    $("#edit_doj").datepicker();
+
+
     
+
 
 
     $.ajaxSetup({
@@ -306,6 +313,27 @@
                         $('#EDIT_employeeModal').modal('hide');
                     }
                     else{
+                        
+                        var dob = response.employee.Dob;
+                        var doj = response.employee.Doj
+
+                        var dobObject = new Date(dob);
+                        var dojObject = new Date(doj);
+                        
+                        var formattedDob = dobObject.toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: '2-digit',
+                                                day: '2-digit'
+                                            });
+
+                        var formattedDoj = dojObject.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                        });
+                        
+                        var imageName = response.employee.image;
+
 
                         $('#edit_name').val(response.employee.name);
                         $('#edit_email').val(response.employee.email);
@@ -314,8 +342,8 @@
                         $('#edit_address').val(response.employee.address);
                         $('#edit_department').val(response.employee.department);
                         $('#edit_designation').val(response.employee.designation);
-                        $('#edit_dob').val(response.employee.dob);
-                        $('#edit_doj').val(response.employee.doj);
+                        $('#edit_dob').val(formattedDob);
+                        $('#edit_doj').val(formattedDoj);
                         $('#emp_name').val(emp_id);
                         $('.edit_employee').val(emp_id);
 
